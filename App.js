@@ -1,8 +1,9 @@
-import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
 import { StyleSheet, Text, View, Pressable } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import HomeScreen from "./screen/HomeScreen";
 import Recipes from "./screen/Recipes";
 import { COLORS, icons } from "./constants";
@@ -12,6 +13,9 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  
+
   function MyTabs() {
     return (
       <Tab.Navigator screenOptions={{ headerShown: null }}>
