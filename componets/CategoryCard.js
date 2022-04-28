@@ -9,13 +9,13 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress }) => {
       onPress={onPress}
     >
       <Image
-        source={categoryItem.image}
+        source={categoryItem.imageURL}
         resizeMode="cover"
         style={styles.imageStyle}
       />
       <View style={styles.detailsStyle}>
         <Text style={styles.categoryName}>{categoryItem.name}</Text>
-        <Text style ={styles.servings}> {categoryItem.duration} | {categoryItem.serving} Serving</Text>
+       {/*  <Text style ={styles.servings}> {categoryItem.duration} | {categoryItem.serving} Serving</Text> */}
       </View>
     </TouchableOpacity>
   );

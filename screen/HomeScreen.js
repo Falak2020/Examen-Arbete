@@ -6,14 +6,49 @@ import {
   SafeAreaView,
   TouchableOpacity,
   FlatList,
-  TextInput
+  TextInput,
 } from "react-native";
-import React, { useEffect } from "react";
-import { CategoryCard,TrendingCard } from "../componets";
+import React, { useEffect, useState, useRef } from "react";
+import { CategoryCard, TrendingCard } from "../componets";
 import { FONTS, COLORS, SIZES, icons, images, dummyData } from "../constants";
 
 const HomeScreen = ({ navigation }) => {
+  const [catgories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const getCategories = () => {
+    setLoading(true);
+    fetch("https://localhost:44348/api/CategoryEntities")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("data");
+        console.log(data);
+        setCategories(data);
+        setLoading(false);
+      });
+  };
+  let isRendered = useRef(false);
+
+  useEffect(() => {
+    isRendered = true;
+    fetch("http://10.0.2.2:44348/api/CategoryEntities")
+      .then((res) => res.json())
+      .then((data) => {
+        console.log('first')
+        console.log(data)
+        if (isRendered) 
+          setCategories(data);
+        return null
+      })
+      .catch((err)=>console.log(err))
+
+    return () => {
+      isRendered = false;
+    };
+  }, []);
+
+  
   const renderItem = ({ item }) => {
+    console.log(item)
     return (
       <CategoryCard
         containerStyle={{
@@ -63,75 +98,65 @@ const HomeScreen = ({ navigation }) => {
           <Text style={styles.cardText}>
             you have 12 recipes that you havenot tried yet
           </Text>
-           <TouchableOpacity
-              style={{
-                  marginTop: 10
-              }}
-              onPress={()=>console.log('see Recipe')}
-            >
-                <Text style={styles.seeRecipeText}>
-                   See Recipes
-                </Text>
-
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={{
+              marginTop: 10,
+            }}
+            onPress={() => console.log("see Recipe")}
+          >
+            <Text style={styles.seeRecipeText}>See Recipes</Text>
+          </TouchableOpacity>
         </View>
       </View>
     );
   };
 
   const renderTrendingSection = () => {
-      return(
-      <View style={{marginTop: SIZES.padding}}>
-          <Text
-            style={{
-                marginHorizontal: SIZES.padding,
-                ...FONTS.h2
-            }}
-          >
-              Trending Recipe
-          </Text>
-          <FlatList 
-            data={dummyData.trendingRecipes}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            keyExtractor={item=>`${item.id}`}
-            renderItem={({item,index})=>{
-                return(
-                   <TrendingCard 
-                       containerStyle={{
-                         marginLeft: index==0?SIZES.padding: 0
-                       }}
-                      recipeItem={item}
-                      onPress ={()=>navigation.navigate
-                       ('Recipe',{recipe:item})
-                      }
-                   />
-                )
-            }}          
-          />
-
-      </View>
-      ) 
-  }
-
-  const renderCategoryHeader = ()=>{
-    return(
-      <View style={styles.categoryHeaderContainer}>
-        <Text style = {styles.categoryHeader}>
-          Categories
+    return (
+      <View style={{ marginTop: SIZES.padding }}>
+        <Text
+          style={{
+            marginHorizontal: SIZES.padding,
+            ...FONTS.h2,
+          }}
+        >
+          Trending Recipe
         </Text>
+        <FlatList
+          data={dummyData.trendingRecipes}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => `${item.id}`}
+          renderItem={({ item, index }) => {
+            return (
+              <TrendingCard
+                containerStyle={{
+                  marginLeft: index == 0 ? SIZES.padding : 0,
+                }}
+                recipeItem={item}
+                onPress={() => navigation.navigate("Recipe", { recipe: item })}
+              />
+            );
+          }}
+        />
+      </View>
+    );
+  };
+
+  const renderCategoryHeader = () => {
+    return (
+      <View style={styles.categoryHeaderContainer}>
+        <Text style={styles.categoryHeader}>Categories</Text>
         <TouchableOpacity>
-          <Text style={styles.viewAll}>
-            View All
-          </Text>
+          <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>
-    )
-  }
+    );
+  };
   return (
     <SafeAreaView>
       <FlatList
-        data={dummyData.categories}
+        data={catgories}
         keyExtractor={(item) => `${item.id}`}
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
@@ -220,23 +245,23 @@ const styles = StyleSheet.create({
     width: "70%",
     ...FONTS.body4,
   },
-  seeRecipeText:{
-      color: COLORS.darkGreen,
-      textDecorationLine:'underline',
-      ...FONTS.h4
+  seeRecipeText: {
+    color: COLORS.darkGreen,
+    textDecorationLine: "underline",
+    ...FONTS.h4,
   },
-  categoryHeaderContainer:{
-    flexDirection:'row',
-    alignItems:'center',
+  categoryHeaderContainer: {
+    flexDirection: "row",
+    alignItems: "center",
     marginTop: 20,
-    marginHorizontal: SIZES.padding
+    marginHorizontal: SIZES.padding,
   },
-  categoryHeader:{
-    flex:1,
-    ...FONTS.h2
+  categoryHeader: {
+    flex: 1,
+    ...FONTS.h2,
   },
-  viewAll:{
+  viewAll: {
     color: COLORS.gray,
-    ...FONTS.body4
-  }
+    ...FONTS.body4,
+  },
 });

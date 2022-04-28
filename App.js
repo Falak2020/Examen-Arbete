@@ -14,8 +14,6 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
 
-  
-
   function MyTabs() {
     return (
       <Tab.Navigator screenOptions={{ headerShown: null }}>
