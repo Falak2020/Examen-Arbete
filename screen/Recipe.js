@@ -23,10 +23,10 @@ const RecipeCreatorCardDetail = ({ selectedRecipe }) => {
       }}
     >
       <View style={styles.profilePictureContainer}>
-        <Image
+        {/* <Image
           source={selectedRecipe?.author?.profilePic}
           style={styles.profilePicture}
-        />
+        /> */}
       </View>
       <View
         style={{
@@ -48,7 +48,7 @@ const RecipeCreatorCardDetail = ({ selectedRecipe }) => {
             ...FONTS.h3,
           }}
         >
-          {selectedRecipe?.author?.name}
+          {/*  {selectedRecipe?.author?.name} */}
         </Text>
       </View>
       <TouchableOpacity
@@ -110,7 +110,7 @@ const Recipe = ({ navigation, route }) => {
         }}
       >
         <Animated.Image
-          source={selectedRecipe?.image}
+          source={{ uri: selectedRecipe?.imageURL }}
           resizeMode="contain"
           style={[
             styles.headerImage,
@@ -167,7 +167,7 @@ const Recipe = ({ navigation, route }) => {
           <Image source={icons.back} style={styles.backIcon} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.bookMark}>
-          <Image
+          {/*  <Image
             source={
               selectedRecipe?.isBookmark ? icons.bookmarkFilled : icons.bookmark
             }
@@ -176,7 +176,7 @@ const Recipe = ({ navigation, route }) => {
               height: 30,
               tintColor: COLORS.darkGreen,
             }}
-          />
+          /> */}
         </TouchableOpacity>
       </View>
     );
@@ -212,17 +212,24 @@ const Recipe = ({ navigation, route }) => {
     );
   }
 
-  function renderIngredientHeader(){
-    return(
-      <View
-       style= {styles.IngHeaderContainer}
-      >
-        <Text style= {styles.ingredientsTitle}>ingredients</Text>
-        <Text style = {styles.ingredientsCount}>
+  function renderIngredientHeader() {
+    return (
+      <View style={styles.IngHeaderContainer}>
+        <Text style={styles.ingredientsTitle}>ingredients</Text>
+        <Text style={styles.ingredientsCount}>
           {selectedRecipe?.ingredients.length} items
         </Text>
       </View>
-    )
+    );
+  }
+
+  function renderinstruction(instructions) {
+    console.log(instructions);
+    return (
+      <View>
+        <Text>{instructions}</Text>
+      </View>
+    );
   }
   return (
     <View
@@ -232,7 +239,7 @@ const Recipe = ({ navigation, route }) => {
       }}
     >
       <Animated.FlatList
-        data={selectedRecipe?.ingredients}
+        data={selectedRecipe?.recipeIngredients}
         keyExtractor={(item) => `${item.id}`}
         showsVerticalScrollIndicator={false}
         ListHeaderComponent={
@@ -240,9 +247,9 @@ const Recipe = ({ navigation, route }) => {
             {/* header */}
             {renderRecipeCardHeader()}
             {/* Info */}
-            {renderRecipeInfo()}
+            {/*  {renderRecipeInfo()} */}
             {/* Ingredient Titel */}
-            {renderIngredientHeader()}
+            {/*   {renderIngredientHeader()} */}
           </View>
         }
         scrollEventThrottle={16}
@@ -253,36 +260,27 @@ const Recipe = ({ navigation, route }) => {
         renderItem={({ item }) => (
           <View
             style={{
-              flexDirection: "row",
-              paddingHorizontal: 30,
-              marginVertical: 5,
+              paddingHorizontal: 50,
             }}
           >
-            <View style={styles.icon}>
-              <Image
-                source={item.icon}
-                style={{
-                  height: 40,
-                  width: 40,
-                }}
-              />
-            </View>
-            <View style={styles.descriptionContainer}>
-              <Text style={styles.description}>{item.description}</Text>
-            </View>
-
-            <View style={styles.quantityContainer}>
-              <Text style={styles.quantity}>{item.quantity}</Text>
+            <View style={styles.ingredientsContainer}>
+              <View style={styles.descriptionContainer}>
+                <Text style={styles.description}>{item.ingredient.name}</Text>
+              </View>
+              {item.ingredient.amount != 0 ? (
+                <View style={styles.quantityContainer}>
+                  <Text style={styles.quantity}>{item.ingredient.amount}</Text>
+                  <Text style={styles.unite}>
+                    {item.ingredient.unitOfMeasure.name}
+                  </Text>
+                </View>
+              ) : undefined}
             </View>
           </View>
         )}
-
-       ListFooterComponent={
-         <View style= {{marginBottom: 100}}>
-           
-         </View>
-       }
+        ListFooterComponent={<View style={{ marginBottom: 100 }}></View>}
       />
+      {/* {renderinstruction(selectedRecipe?.instructions)} */}
       {renderHeaderBar()}
     </View>
   );
@@ -299,6 +297,13 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: COLORS.lightGray,
   },
+  ingredientsContainer: {
+    flexDirection: "row",
+    borderBottomWidth: 0.2,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 20,
+  },
   descriptionContainer: {
     flex: 1,
     paddingHorizontal: 20,
@@ -308,11 +313,15 @@ const styles = StyleSheet.create({
     ...FONTS.body3,
   },
   quantityContainer: {
-    alignItems: "flex-end",
+    alignItems: "center",
     justifyContent: "center",
+    flexDirection: "row",
   },
   quantity: {
     ...FONTS.body3,
+  },
+  unite: {
+    marginLeft: 5,
   },
   headerImage: {
     height: HEADER_HEIGHT,
@@ -385,18 +394,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   IngHeaderContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     paddingHorizontal: 30,
     marginTop: SIZES.radius,
-    marginBottom: SIZES.padding
+    marginBottom: SIZES.padding,
   },
-  ingredientsTitle:{
+  ingredientsTitle: {
     flex: 1,
-    ...FONTS.h3
+    ...FONTS.h3,
   },
   ingredientsCount: {
     color: COLORS.lightGray2,
-    ...FONTS.body4
-  }
-
+    ...FONTS.body4,
+  },
 });

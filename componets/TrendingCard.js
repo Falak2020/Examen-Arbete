@@ -10,6 +10,7 @@ import React from "react";
 import { SIZES, FONTS, COLORS, icons } from "../constants";
 import { BlurView } from "expo-blur";
 const TrendingCard = ({ containerStyle, recipeItem, onPress }) => {
+
   const RecipeCardDetails = ({ recipeItem }) => {
     return (
       <View style={{ flex: 1 }}>
@@ -17,7 +18,7 @@ const TrendingCard = ({ containerStyle, recipeItem, onPress }) => {
           <Text style={styles.nameStyle}>
               {recipeItem.name}
           </Text>
-          <Image 
+         {/*  <Image 
             source={recipeItem.isBookmark ? icons.bookmarkFilled: icons.bookmark}
             style={{
                 width: 20,
@@ -25,7 +26,7 @@ const TrendingCard = ({ containerStyle, recipeItem, onPress }) => {
                 marginRight: SIZES.base,
                 tintColor: COLORS.darkGreen
             }}
-          />
+          /> */}
         </View>
         <Text
           style = {{
@@ -33,7 +34,7 @@ const TrendingCard = ({ containerStyle, recipeItem, onPress }) => {
               ...FONTS.body4
           }}
         >
-            {recipeItem.duration} | {recipeItem.serving}
+            {recipeItem.bakeTime} min | {recipeItem.bakeTemperature} grader
         </Text>
       </View>
     );
@@ -61,27 +62,27 @@ const TrendingCard = ({ containerStyle, recipeItem, onPress }) => {
         </View>
       );
     }
-  };
+  }; 
   return (
     <TouchableOpacity
       style={[styles.cardContainer, { ...containerStyle }]}
       onPress={onPress}
     >
       <Image
-        source={recipeItem.image}
+        source={{uri:recipeItem.imageURL}}
         resizeMode="cover"
         style={{
           width: 250,
           height: 350,
           borderRadius: SIZES.radius,
-        }}
+        }} 
       />
       {/**Category */}
       <View style={styles.categoryContainer}>
-        <Text style={styles.category}>{recipeItem.category}</Text>
+        <Text style={styles.category}>{recipeItem.category.name}</Text> 
       </View>
       {/**Card Info */}
-      <RecipeCardInfo recipeItem={recipeItem} />
+     <RecipeCardInfo recipeItem={recipeItem} /> 
     </TouchableOpacity>
   );
 };
@@ -125,7 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   nameStyle: {
-    width: "70%",
+    width: "100%",
     color: COLORS.white,
     ...FONTS.h3,
     fontSize: 18,

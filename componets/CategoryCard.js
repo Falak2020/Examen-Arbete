@@ -3,13 +3,15 @@ import React from "react";
 import { COLORS, FONTS, SIZES } from "../constants";
 
 const CategoryCard = ({ containerStyle, categoryItem, onPress }) => {
+  
   return (
+
     <TouchableOpacity
       style={[styles.cardContainer, { ...containerStyle }]}
       onPress={onPress}
     >
       <Image
-        source={categoryItem.imageURL}
+        source={{uri:categoryItem.imageURL}}
         resizeMode="cover"
         style={styles.imageStyle}
       />

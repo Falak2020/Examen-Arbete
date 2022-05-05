@@ -14,22 +14,8 @@ const Stack = createNativeStackNavigator();
 
 export default function App() {
 
-  function MyTabs() {
-    return (
-      <Tab.Navigator screenOptions={{ headerShown: null }}>
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Recept" component={Recipes} />
-      </Tab.Navigator>
-    );
-  }
-
-  const fetchApi = () => {
-    fetch("https://localhost:44348/api/RecipeEntities")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
-  };
+  
+ 
 
   const Tabs = () => {
     return (
@@ -80,6 +66,7 @@ export default function App() {
       >
         <Stack.Screen name="Start" component={Tabs} />
         <Stack.Screen name="Recipe" component={Recipe} />
+        <Stack.Screen name="Recipes" component={Recipes} />
       </Stack.Navigator>
     </NavigationContainer>
 

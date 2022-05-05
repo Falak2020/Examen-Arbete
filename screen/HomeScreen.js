@@ -8,54 +8,57 @@ import {
   FlatList,
   TextInput,
 } from "react-native";
+
 import React, { useEffect, useState, useRef } from "react";
+
 import { CategoryCard, TrendingCard } from "../componets";
 import { FONTS, COLORS, SIZES, icons, images, dummyData } from "../constants";
 
 const HomeScreen = ({ navigation }) => {
   const [catgories, setCategories] = useState([]);
+  const [trendingRecipes, setTrendingRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
-  const getCategories = () => {
-    setLoading(true);
-    fetch("https://localhost:44348/api/CategoryEntities")
+
+  const getTrendingRecipe = () => {
+    fetch("https://recipe-myapi.azurewebsites.net/api/RecipeEntities")
       .then((res) => res.json())
       .then((data) => {
-        console.log("data");
-        console.log(data);
+       
+        setTrendingRecipes(data);
+      })
+      .catch((err) => console.log(err));
+  };
+  const getCategories = () => {
+    
+    fetch("https://recipe-myapi.azurewebsites.net/api/CategoryEntities")
+      .then((res) => res.json())
+      .then((data) => {
+        
         setCategories(data);
-        setLoading(false);
+      
       });
   };
-  let isRendered = useRef(false);
 
   useEffect(() => {
-    isRendered = true;
-    fetch("http://10.0.2.2:44348/api/CategoryEntities")
-      .then((res) => res.json())
-      .then((data) => {
-        console.log('first')
-        console.log(data)
-        if (isRendered) 
-          setCategories(data);
-        return null
-      })
-      .catch((err)=>console.log(err))
+    getTrendingRecipe();
+    getCategories();
 
-    return () => {
-      isRendered = false;
-    };
+    return () => {};
   }, []);
 
-  
   const renderItem = ({ item }) => {
-    console.log(item)
+    
     return (
       <CategoryCard
         containerStyle={{
           marginHorizontal: SIZES.padding,
         }}
         categoryItem={item}
-        onPress={() => navigation.navigate("Recipe", { recipe: item })}
+        onPress={() => navigation.navigate("Recipes", {
+           id: item.id,
+           name: item.name 
+          
+          })}
       />
     );
   };
@@ -123,11 +126,12 @@ const HomeScreen = ({ navigation }) => {
           Trending Recipe
         </Text>
         <FlatList
-          data={dummyData.trendingRecipes}
+          data={trendingRecipes}
           horizontal
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => `${item.id}`}
           renderItem={({ item, index }) => {
+            
             return (
               <TrendingCard
                 containerStyle={{
@@ -136,7 +140,7 @@ const HomeScreen = ({ navigation }) => {
                 recipeItem={item}
                 onPress={() => navigation.navigate("Recipe", { recipe: item })}
               />
-            );
+            ); 
           }}
         />
       </View>
