@@ -9,6 +9,7 @@ import Recipes from "./screen/Recipes";
 import { COLORS, icons } from "./constants";
 import { TabIcon } from "./componets";
 import Recipe from "./screen/Recipe";
+import UserScreen from "./screen/UserScreen";
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -67,6 +68,8 @@ export default function App() {
         <Stack.Screen name="Start" component={Tabs} />
         <Stack.Screen name="Recipe" component={Recipe} />
         <Stack.Screen name="Recipes" component={Recipes} />
+        <Stack.Screen name="User" component={UserScreen} />
+
       </Stack.Navigator>
     </NavigationContainer>
 

@@ -23,7 +23,7 @@ const RecipeCard = ({ recipe, onPress }) => {
       <View style={styles.detailsStyle}>
         <Text style={styles.recipeName}>{recipe.name}</Text>
         <Text style={styles.bakeTime}>
-          {recipe.bakeTime} min| {recipe.bakeTemperature}&deg;
+        {recipe.bakeTime} min| {recipe.bakeTemperature}&deg;
         </Text>
       </View>
     </TouchableOpacity>

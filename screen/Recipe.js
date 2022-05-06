@@ -13,7 +13,8 @@ import { BlurView } from "expo-blur";
 import { SIZES, FONTS, COLORS, icons } from "../constants";
 
 const HEADER_HEIGHT = 350;
-const RecipeCreatorCardDetail = ({ selectedRecipe }) => {
+
+const RecipeCreatorCardDetail = ({ selectedRecipe, navigation }) => {
   return (
     <View
       style={{
@@ -23,10 +24,10 @@ const RecipeCreatorCardDetail = ({ selectedRecipe }) => {
       }}
     >
       <View style={styles.profilePictureContainer}>
-        {/* <Image
-          source={selectedRecipe?.author?.profilePic}
+        <Image
+          source={{ uri: selectedRecipe?.user?.imageURL }}
           style={styles.profilePicture}
-        /> */}
+        />
       </View>
       <View
         style={{
@@ -48,13 +49,16 @@ const RecipeCreatorCardDetail = ({ selectedRecipe }) => {
             ...FONTS.h3,
           }}
         >
-          {/*  {selectedRecipe?.author?.name} */}
+          {selectedRecipe?.user?.firstName} {selectedRecipe?.user?.lastName}
         </Text>
       </View>
+
+      {/*  View Prfile */}
+
       <TouchableOpacity
         style={styles.arrowButtonContainer}
         onPress={() => {
-          console.log("View Profil");
+          navigation.navigate("User", { userinfo: selectedRecipe?.user });
         }}
       >
         <Image source={icons.rightArrow} style={styles.arrowButton} />
@@ -62,7 +66,7 @@ const RecipeCreatorCardDetail = ({ selectedRecipe }) => {
     </View>
   );
 };
-const RecipeCreatorCardInfo = ({ selectedRecipe }) => {
+const RecipeCreatorCardInfo = ({ selectedRecipe, navigation }) => {
   if (Platform.OS === "ios") {
     return (
       <BlurView
@@ -73,7 +77,10 @@ const RecipeCreatorCardInfo = ({ selectedRecipe }) => {
           borderRadius: SIZES.radius,
         }}
       >
-        <RecipeCreatorCardDetail selectedRecipe={selectedRecipe} />
+        <RecipeCreatorCardDetail
+          selectedRecipe={selectedRecipe}
+          navigation={navigation}
+        />
       </BlurView>
     );
   } else {
@@ -85,14 +92,29 @@ const RecipeCreatorCardInfo = ({ selectedRecipe }) => {
           backgroundColor: COLORS.transparentBlack9,
         }}
       >
-        <RecipeCreatorCardDetail selectedRecipe={selectedRecipe} />
+        <RecipeCreatorCardDetail
+          selectedRecipe={selectedRecipe}
+          navigation={navigation}
+        />
       </View>
     );
   }
 };
+
+const InstructionDetail = ({ instruction, num }) => {
+  return (
+    <View style={styles.instructionContainer}>
+      <Text style={styles.instruction}>
+        {num + 1}. {instruction}
+      </Text>
+    </View>
+  );
+};
 const Recipe = ({ navigation, route }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const scrollY = useRef(new Animated.Value(0)).current;
+
+  let instructionsArry = selectedRecipe?.instructions.split(".");
 
   useEffect(() => {
     let { recipe } = route.params;
@@ -151,7 +173,10 @@ const Recipe = ({ navigation, route }) => {
             ],
           }}
         >
-          <RecipeCreatorCardInfo selectedRecipe={selectedRecipe} />
+          <RecipeCreatorCardInfo
+            selectedRecipe={selectedRecipe}
+            navigation={navigation}
+          />
         </Animated.View>
       </View>
     );
@@ -205,7 +230,7 @@ const Recipe = ({ navigation, route }) => {
               ...FONTS.body4,
             }}
           >
-            {selectedRecipe?.duration} | {selectedRecipe?.serving} Serving
+            {selectedRecipe?.bakeTime} min | {selectedRecipe?.serving} Serving
           </Text>
         </View>
       </View>
@@ -217,17 +242,31 @@ const Recipe = ({ navigation, route }) => {
       <View style={styles.IngHeaderContainer}>
         <Text style={styles.ingredientsTitle}>ingredients</Text>
         <Text style={styles.ingredientsCount}>
-          {selectedRecipe?.ingredients.length} items
+          {selectedRecipe?.recipeIngredients.length} items
         </Text>
       </View>
     );
   }
+  function renderInstructionsHeader() {
+    return (
+      <View style={styles.IngHeaderContainer}>
+        <Text style={styles.ingredientsTitle}>Instructions</Text>
+      </View>
+    );
+  }
 
-  function renderinstruction(instructions) {
-    console.log(instructions);
+  function renderinstruction() {
     return (
       <View>
-        <Text>{instructions}</Text>
+        {instructionsArry?.map((instruction, index) => {
+          return (
+            <InstructionDetail
+              key={index}
+              instruction={instruction}
+              num={index}
+            />
+          );
+        })}
       </View>
     );
   }
@@ -247,9 +286,9 @@ const Recipe = ({ navigation, route }) => {
             {/* header */}
             {renderRecipeCardHeader()}
             {/* Info */}
-            {/*  {renderRecipeInfo()} */}
+            {renderRecipeInfo()}
             {/* Ingredient Titel */}
-            {/*   {renderIngredientHeader()} */}
+            {renderIngredientHeader()}
           </View>
         }
         scrollEventThrottle={16}
@@ -278,9 +317,14 @@ const Recipe = ({ navigation, route }) => {
             </View>
           </View>
         )}
-        ListFooterComponent={<View style={{ marginBottom: 100 }}></View>}
+        ListFooterComponent={
+          <View style={{ marginBottom: 100 }}>
+            {renderInstructionsHeader()}
+            {renderinstruction()}
+          </View>
+        }
       />
-      {/* {renderinstruction(selectedRecipe?.instructions)} */}
+
       {renderHeaderBar()}
     </View>
   );
@@ -299,14 +343,12 @@ const styles = StyleSheet.create({
   },
   ingredientsContainer: {
     flexDirection: "row",
-    borderBottomWidth: 0.2,
+    borderBottomWidth: 0.5,
     alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
+    paddingVertical: 20,
   },
   descriptionContainer: {
     flex: 1,
-    paddingHorizontal: 20,
     justifyContent: "center",
   },
   description: {
@@ -396,15 +438,25 @@ const styles = StyleSheet.create({
   IngHeaderContainer: {
     flexDirection: "row",
     paddingHorizontal: 30,
+    paddingVertical: 10,
     marginTop: SIZES.radius,
-    marginBottom: SIZES.padding,
+    marginBottom: 10,
+    backgroundColor: COLORS.lightLime,
   },
   ingredientsTitle: {
     flex: 1,
-    ...FONTS.h3,
+    ...FONTS.h2,
   },
   ingredientsCount: {
     color: COLORS.lightGray2,
     ...FONTS.body4,
+  },
+  instructionContainer: {
+    marginLeft: 30,
+    flexDirection: "row",
+    paddingVertical:10
+  },
+  instruction: {
+    ...FONTS.body3,
   },
 });
