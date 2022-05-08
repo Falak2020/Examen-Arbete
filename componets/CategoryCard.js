@@ -17,7 +17,7 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress }) => {
       />
       <View style={styles.detailsStyle}>
         <Text style={styles.categoryName}>{categoryItem.name}</Text>
-       {/*  <Text style ={styles.servings}> {categoryItem.duration} | {categoryItem.serving} Serving</Text> */}
+        <Text style ={styles.recipecounter}> {categoryItem.recipeEntities.length} Recept</Text>
       </View>
     </TouchableOpacity>
   );
@@ -44,11 +44,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   categoryName: {
-    flex: 1,
     ...FONTS.h2,
   },
-  serving:{
+  recipecounter:{
       color: COLORS.gray,
-      ...FONTS.body4
+      ...FONTS.body4,
+      marginTop:10
   }
 });

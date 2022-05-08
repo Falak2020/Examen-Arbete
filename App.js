@@ -10,6 +10,9 @@ import { COLORS, icons } from "./constants";
 import { TabIcon } from "./componets";
 import Recipe from "./screen/Recipe";
 import UserScreen from "./screen/UserScreen";
+import Settings from "./screen/Settings";
+import FilteredScreen from "./screen/FilteredScreen";
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +26,7 @@ export default function App() {
       <Tab.Navigator
         screenOptions={{
           tabBarShowLabel: false,
+          headerTitle: "",
           tabBarIconStyle: {
             position: "absolute",
             bottom: 0,
@@ -45,11 +49,11 @@ export default function App() {
           }}
         />
         <Tab.Screen
-          name="Recept"
-          component={Recipes}
+          name="Settings"
+          component={Settings}
           options={{
             tabBarIcon: ({ focused }) => (
-              <TabIcon focused={focused} icon={icons.bookmark} />
+              <TabIcon focused={focused} icon={icons.settings} />
             ),
           }}
         />
@@ -69,6 +73,8 @@ export default function App() {
         <Stack.Screen name="Recipe" component={Recipe} />
         <Stack.Screen name="Recipes" component={Recipes} />
         <Stack.Screen name="User" component={UserScreen} />
+        <Stack.Screen name="FilteredScreen" component={FilteredScreen}/>
+
 
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,35 +1,32 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  SafeAreaView,
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, FlatList, TouchableOpacity, Image } from "react-native";
 import React, { useEffect, useState } from "react";
-import { COLORS, FONTS, SIZES,icons } from "../constants";
 import RecipeCard from "../componets/RecipeCard";
+import { COLORS, FONTS, SIZES,icons } from "../constants";
 
-
-const Recipes = ({ navigation, route }) => {
-  let categoryId = route.params.id;
-  let categoryName = route.params.name;
-  const [recipes, setRecipes] = useState([]);
-  const getRecipes = (categoryId) => {
-    fetch(
-      `https://recipe-myapi.azurewebsites.net/api/CategoryEntities/${categoryId}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setRecipes(data.recipeEntities);
-      });
-  };
+const FilteredScreen = ({ navigation, route }) => {
+  let searchKey = route.params.searchKey;
+  const [filter, setFilter] = useState([]);
 
   useEffect(() => {
-    getRecipes(categoryId);
+    fetch(`https://recipe-myapi.azurewebsites.net/api/RecipeEntities`)
+      .then((res) => res.json())
+      .then((data) => {
+        setFilter(
+          data.filter((recipe) => recipe.name.toLowerCase().match(searchKey))
+        );
+      });
+
+    return () => {};
   }, []);
-  
+  const renderHeader = () => {
+    return (
+      <View style={styles.headerContainer}>
+        <View style={styles.headerView}>
+          <Text style={styles.headerText}>Du har fått {filter.length} recept i din sökning</Text>
+        </View>
+      </View>
+    );
+  };
   function renderHeaderBar() {
     return (
       <View style={styles.headerBarContainer}>
@@ -42,16 +39,6 @@ const Recipes = ({ navigation, route }) => {
       </View>
     );
   }
-
-  const renderHeader = () => {
-    return (
-      <View style={styles.headerContainer}>
-        <View style={styles.headerView}>
-          <Text style={styles.headerText}>{categoryName}</Text>
-        </View>
-      </View>
-    );
-  };
   const renderRecipes = ({ item }) => {
     return (
       <RecipeCard 
@@ -70,7 +57,7 @@ const Recipes = ({ navigation, route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
-        data={recipes}
+        data={filter}
         keyExtractor={(item) => `${item.id}`}
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
@@ -79,57 +66,21 @@ const Recipes = ({ navigation, route }) => {
         ListFooterComponent={<View style={{ marginBottom: 100 }}></View>}
       />
       {renderHeaderBar()}
+
     </SafeAreaView>
   );
 };
 
-export default Recipes;
+export default FilteredScreen;
 
 const styles = StyleSheet.create({
   container: {
     marginTop: 30,
     padding: 30,
   },
-  icon: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 50,
-    width: 50,
-    borderRadius: 5,
-    backgroundColor: COLORS.lightGray,
-  },
-  cardContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 10,
-    marginTop: 10,
-    borderRadius: SIZES.radius,
-    backgroundColor: COLORS.gray2,
-  },
-  detailsStyle: {
-    width: "65%",
-    paddingHorizontal: 20,
-  },
-  recipeName: {
-    flex: 1,
-    ...FONTS.h2,
-  },
-  bakeTime: {
-    color: COLORS.gray,
-    ...FONTS.body4,
-  },
-  imageStyle: {
-    width: 100,
-    height: 100,
-    borderRadius: SIZES.radius,
-  },
-  headerContainer: {
-    marginHorizontal: SIZES.padding,
-    alignItems: "center",
-    height: 80,
-  },
-  headerText: {
-    fontSize: 30,
+  headerContainer:{
+    margin:20,
+    marginLeft:40
   },
   headerBarContainer: {
     position: "absolute",

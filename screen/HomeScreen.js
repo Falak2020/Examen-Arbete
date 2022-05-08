@@ -18,6 +18,13 @@ const HomeScreen = ({ navigation }) => {
   const [catgories, setCategories] = useState([]);
   const [trendingRecipes, setTrendingRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [allRecipes, setAllRecipes] = useState([]);
+
+
+  const search = useRef();
+  const [searchVal,setSearchVal] = useState('');
+  
+
 
   const getTrendingRecipe = () => {
     fetch("https://recipe-myapi.azurewebsites.net/api/RecipeEntities")
@@ -42,9 +49,12 @@ const HomeScreen = ({ navigation }) => {
   useEffect(() => {
     getTrendingRecipe();
     getCategories();
-
+    const unsubscribe = navigation.addListener('focus', () => {
+     setSearchVal('');
+  });
+  return unsubscribe;
     return () => {};
-  }, []);
+  }, [navigation]);
 
   const renderItem = ({ item }) => {
     
@@ -86,11 +96,23 @@ const HomeScreen = ({ navigation }) => {
           style={styles.searchText}
           placeholderTextColor={COLORS.gray}
           placeholder="Sök Recept"
+          ref={search}
+          value = {searchVal}
+          onChangeText = {(text)=>{
+            setSearchVal(text)
+           
+          }}
+          returnKeyType='go'
+          onSubmitEditing={()=>{  
+            navigation.navigate('FilteredScreen',{
+              searchKey:searchVal
+            });
+          }}
         />
       </View>
     );
   };
-
+ 
   const renderSeeRecipeCard = () => {
     return (
       <View style={styles.recipeCard}>
@@ -158,7 +180,7 @@ const HomeScreen = ({ navigation }) => {
     );
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style = {styles.container}>
       <FlatList
         data={catgories}
         keyExtractor={(item) => `${item.id}`}
@@ -184,6 +206,10 @@ const HomeScreen = ({ navigation }) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
+  container:{
+  
+   
+  },
   headerContainer: {
     flexDirection: "row",
     marginHorizontal: SIZES.padding,
