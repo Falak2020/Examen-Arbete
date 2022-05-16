@@ -18,15 +18,15 @@ const TrendingCard = ({ containerStyle, recipeItem, onPress }) => {
           <Text style={styles.nameStyle}>
               {recipeItem.name}
           </Text>
-         {/*  <Image 
-            source={recipeItem.isBookmark ? icons.bookmarkFilled: icons.bookmark}
+         <Image 
+            source={recipeItem.isliked ? icons.like_filled: icons.like}
             style={{
                 width: 20,
                 height: 20,
                 marginRight: SIZES.base,
                 tintColor: COLORS.darkGreen
             }}
-          /> */}
+          /> 
         </View>
         <Text
           style = {{
@@ -126,7 +126,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   nameStyle: {
-    width: "100%",
+    width: "70%",
     color: COLORS.white,
     ...FONTS.h3,
     fontSize: 18,

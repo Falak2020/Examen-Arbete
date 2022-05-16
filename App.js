@@ -12,6 +12,7 @@ import Recipe from "./screen/Recipe";
 import UserScreen from "./screen/UserScreen";
 import Settings from "./screen/Settings";
 import FilteredScreen from "./screen/FilteredScreen";
+import Login from "./screen/Login";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -67,8 +68,9 @@ export default function App() {
         screenOptions={{
           headerShown: false,
         }}
-        initialRouteName={"Start"}
+        initialRouteName={"login"}
       >
+        <Stack.Screen name="login" component={Login} />
         <Stack.Screen name="Start" component={Tabs} />
         <Stack.Screen name="Recipe" component={Recipe} />
         <Stack.Screen name="Recipes" component={Recipes} />

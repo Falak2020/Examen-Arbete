@@ -113,9 +113,21 @@ const InstructionDetail = ({ instruction, num }) => {
 const Recipe = ({ navigation, route }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const scrollY = useRef(new Animated.Value(0)).current;
+  const [isedit, setIsEdit] = useState(false);
 
   let instructionsArry = selectedRecipe?.instructions.split(".");
 
+  const editRecipe = () => {
+    selectedRecipe.isliked = !selectedRecipe.isliked;
+    console.log(
+      `https://recipe-myapi.azurewebsites.net/api/RecipeEntities/${selectedRecipe.id}/1`
+    );
+    fetch(
+      `https://recipe-myapi.azurewebsites.net/api/RecipeEntities/${selectedRecipe.id}/1`
+    ).then((res) => {
+      if (res.status == "204") setIsEdit(!isedit);
+    });
+  };
   useEffect(() => {
     let { recipe } = route.params;
     setSelectedRecipe(recipe);
@@ -191,18 +203,7 @@ const Recipe = ({ navigation, route }) => {
         >
           <Image source={icons.back} style={styles.backIcon} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.bookMark}>
-          {/*  <Image
-            source={
-              selectedRecipe?.isBookmark ? icons.bookmarkFilled : icons.bookmark
-            }
-            style={{
-              width: 30,
-              height: 30,
-              tintColor: COLORS.darkGreen,
-            }}
-          /> */}
-        </TouchableOpacity>
+       
       </View>
     );
   }
@@ -216,13 +217,32 @@ const Recipe = ({ navigation, route }) => {
             justifyContent: "center",
           }}
         >
-          <Text
-            style={{
-              ...FONTS.h2,
-            }}
-          >
-            {selectedRecipe?.name}
-          </Text>
+          <View style = {styles.likeContainer}>
+            <Text
+              style={{
+                ...FONTS.h2,
+              }}
+            >
+              {selectedRecipe?.name}
+            </Text>
+             {/**Like section */}
+             <TouchableOpacity
+              style={styles.likeIcon}
+              onPress={() => editRecipe()}
+            >
+              <Image
+                source={
+                  selectedRecipe?.isliked ? icons.like_filled : icons.like
+                }
+                style={{
+                  width: 30,
+                  height: 30,
+                  tintColor: COLORS.darkGreen,
+                }}
+              />
+            </TouchableOpacity>
+          </View>
+
           <Text
             style={{
               marginTop: 5,
@@ -421,9 +441,13 @@ const styles = StyleSheet.create({
     height: 15,
     tintColor: COLORS.lightGray,
   },
-  bookMark: {
-    alignItems: "center",
-    justifyContent: "center",
+  likeContainer:{
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center'
+  },
+  likeIcon: {
+    marginRight:4,
     height: 35,
     width: 25,
   },
@@ -454,7 +478,7 @@ const styles = StyleSheet.create({
   instructionContainer: {
     marginLeft: 30,
     flexDirection: "row",
-    paddingVertical:10
+    paddingVertical: 10,
   },
   instruction: {
     ...FONTS.body3,
