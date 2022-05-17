@@ -12,8 +12,8 @@ import {
 import React, { useEffect, useState, useRef } from "react";
 
 import { CategoryCard, TrendingCard } from "../componets";
-import { FONTS, COLORS, SIZES, icons, images, dummyData } from "../constants";
-
+import { FONTS, COLORS, SIZES, icons, images } from "../constants";
+import { auth } from '../firebase'
 const HomeScreen = ({ navigation }) => {
   const [catgories, setCategories] = useState([]);
   const [trendingRecipes, setTrendingRecipes] = useState([]);
@@ -24,7 +24,13 @@ const HomeScreen = ({ navigation }) => {
   const search = useRef();
   const [searchVal,setSearchVal] = useState('');
   
-
+ const handleSignout = ()=>{
+   auth
+   .signOut()
+   .then(()=>{
+     navigation.replace('login')
+   })
+ }
 
   const getTrendingRecipe = () => {
     fetch("https://recipe-myapi.azurewebsites.net/api/RecipeEntities")
@@ -74,15 +80,16 @@ const HomeScreen = ({ navigation }) => {
   };
 
   const renderHeader = () => {
+    let index = auth.currentUser?.email.indexOf('@')
     return (
       <View style={styles.headerContainer}>
         <View style={styles.headerView}>
-          <Text style={styles.welcomeText}>Hello,Falak</Text>
+          <Text style={styles.welcomeText}>Hello,{auth.currentUser?.email.substr(0,index)}</Text>
           <Text style={styles.questionText}>Vad vill du laga idag?</Text>
         </View>
-        {/** Profile*/}
-        <TouchableOpacity onPress={() => console.log("profile")}>
-          <Image source={images.profile} style={styles.profile} />
+        {/** sign out*/}
+        <TouchableOpacity onPress={handleSignout}>
+          <Image source={images.logout} style={styles.logout} />
         </TouchableOpacity>
       </View>
     );
@@ -228,9 +235,9 @@ const styles = StyleSheet.create({
     color: COLORS.gray,
     ...FONTS.body3,
   },
-  profile: {
-    width: 40,
-    height: 40,
+  logout: {
+    width: 35,
+    height: 35,
     borderRadius: 20,
   },
   searchContainr: {

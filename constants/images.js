@@ -1,4 +1,5 @@
 const loginBackground = require("../assets/images/system/login-background.png")
+const background = require("../assets/images/system/background.jpg")
 
 const recipe = require("../assets/images/recipes/recipe.png")
 const spagetti = require("../assets/images/recipes/spagetti.png")
@@ -17,6 +18,7 @@ const UserProfile7 = require("../assets/images/dummy_profiles/profile-pic-7.png"
 const UserProfile8 = require("../assets/images/dummy_profiles/profile-pic-8.png")
 const UserProfile9 = require("../assets/images/dummy_profiles/profile-pic-9.png")
 const UserProfile10 = require("../assets/images/dummy_profiles/profile-pic-10.png")
+const logout = require("../assets/images/logout.png")
 
 export default {
     loginBackground,
@@ -26,7 +28,7 @@ export default {
     satay,
     laksa,
     nasiLemak,
-
+    background,
     UserProfile1,
     UserProfile2,
     UserProfile3,
@@ -37,4 +39,5 @@ export default {
     UserProfile8,
     UserProfile9,
     UserProfile10,
+    logout
 }
