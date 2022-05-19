@@ -21,24 +21,11 @@ const FilteredScreen = ({ navigation, route }) => {
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
-        <View style={styles.headerView}>
           <Text style={styles.headerText}>Du har fått {filter.length} recept i din sökning</Text>
-        </View>
       </View>
     );
   };
-  function renderHeaderBar() {
-    return (
-      <View style={styles.headerBarContainer}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Image source={icons.back} style={styles.backIcon} />
-        </TouchableOpacity>
-      </View>
-    );
-  }
+ 
   const renderRecipes = ({ item }) => {
     return (
       <RecipeCard 
@@ -65,7 +52,7 @@ const FilteredScreen = ({ navigation, route }) => {
         renderItem={renderRecipes}
         ListFooterComponent={<View style={{ marginBottom: 100 }}></View>}
       />
-      {renderHeaderBar()}
+     
 
     </SafeAreaView>
   );
@@ -75,12 +62,11 @@ export default FilteredScreen;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
+    marginTop: 10,
     padding: 30,
   },
   headerContainer:{
-    margin:20,
-    marginLeft:40
+   marginBottom:10
   },
   headerBarContainer: {
     position: "absolute",

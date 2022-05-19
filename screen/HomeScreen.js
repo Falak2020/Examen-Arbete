@@ -10,87 +10,82 @@ import {
 } from "react-native";
 
 import React, { useEffect, useState, useRef } from "react";
+import { AntDesign } from '@expo/vector-icons';
 
 import { CategoryCard, TrendingCard } from "../componets";
 import { FONTS, COLORS, SIZES, icons, images } from "../constants";
-import { auth } from '../firebase'
+import { auth } from "../firebase";
+
 const HomeScreen = ({ navigation }) => {
   const [catgories, setCategories] = useState([]);
   const [trendingRecipes, setTrendingRecipes] = useState([]);
   const [loading, setLoading] = useState(false);
   const [allRecipes, setAllRecipes] = useState([]);
 
-
   const search = useRef();
-  const [searchVal,setSearchVal] = useState('');
-  
- const handleSignout = ()=>{
-   auth
-   .signOut()
-   .then(()=>{
-     navigation.replace('login')
-   })
- }
+  const [searchVal, setSearchVal] = useState("");
+
+  const handleSignout = () => {
+    auth.signOut().then(() => {
+      navigation.replace("login");
+    });
+  };
 
   const getTrendingRecipe = () => {
     fetch("https://recipe-myapi.azurewebsites.net/api/RecipeEntities")
       .then((res) => res.json())
       .then((data) => {
-       
         setTrendingRecipes(data);
       })
       .catch((err) => console.log(err));
   };
   const getCategories = () => {
-    
     fetch("https://recipe-myapi.azurewebsites.net/api/CategoryEntities")
       .then((res) => res.json())
       .then((data) => {
-        
         setCategories(data);
-      
       });
   };
 
   useEffect(() => {
-    getTrendingRecipe();
-    getCategories();
-    const unsubscribe = navigation.addListener('focus', () => {
-     setSearchVal('');
-  });
-  return unsubscribe;
-    return () => {};
+    
+    const unsubscribe = navigation.addListener("focus", () => {
+      getTrendingRecipe();
+      getCategories();
+      setSearchVal("");
+    });
+    return unsubscribe;
+   
   }, [navigation]);
 
   const renderItem = ({ item }) => {
-    
     return (
       <CategoryCard
         containerStyle={{
           marginHorizontal: SIZES.padding,
         }}
         categoryItem={item}
-        onPress={() => navigation.navigate("Recipes", {
-           id: item.id,
-           name: item.name 
-          
-          })}
+        onPress={() =>
+          navigation.navigate("Recipes", {
+            id: item.id,
+            name: item.name,
+          })
+        }
       />
     );
   };
 
   const renderHeader = () => {
-    let index = auth.currentUser?.email.indexOf('@')
+    let index = auth.currentUser?.email.indexOf("@");
     return (
       <View style={styles.headerContainer}>
         <View style={styles.headerView}>
-          <Text style={styles.welcomeText}>Hello,{auth.currentUser?.email.substr(0,index)}</Text>
+          <Text style={styles.welcomeText}>
+            Hello,{auth.currentUser?.email.substr(0, index)}
+          </Text>
           <Text style={styles.questionText}>Vad vill du laga idag?</Text>
         </View>
-        {/** sign out*/}
-        <TouchableOpacity onPress={handleSignout}>
-          <Image source={images.logout} style={styles.logout} />
-        </TouchableOpacity>
+        
       </View>
     );
   };
@@ -104,22 +99,21 @@ const HomeScreen = ({ navigation }) => {
           placeholderTextColor={COLORS.gray}
           placeholder="Sök Recept"
           ref={search}
-          value = {searchVal}
-          onChangeText = {(text)=>{
-            setSearchVal(text)
-           
+          value={searchVal}
+          onChangeText={(text) => {
+            setSearchVal(text);
           }}
-          returnKeyType='go'
-          onSubmitEditing={()=>{  
-            navigation.navigate('FilteredScreen',{
-              searchKey:searchVal
+          returnKeyType="go"
+          onSubmitEditing={() => {
+            navigation.navigate("FilteredScreen", {
+              searchKey: searchVal,
             });
           }}
         />
       </View>
     );
   };
- 
+
   const renderSeeRecipeCard = () => {
     return (
       <View style={styles.recipeCard}>
@@ -160,7 +154,6 @@ const HomeScreen = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           keyExtractor={(item) => `${item.id}`}
           renderItem={({ item, index }) => {
-            
             return (
               <TrendingCard
                 containerStyle={{
@@ -169,7 +162,7 @@ const HomeScreen = ({ navigation }) => {
                 recipeItem={item}
                 onPress={() => navigation.navigate("Recipe", { recipe: item })}
               />
-            ); 
+            );
           }}
         />
       </View>
@@ -180,14 +173,21 @@ const HomeScreen = ({ navigation }) => {
     return (
       <View style={styles.categoryHeaderContainer}>
         <Text style={styles.categoryHeader}>Categories</Text>
-        <TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("Recipes", {
+              id: 0,
+              name: 'Alla recept',
+            });
+          }}
+        >
           <Text style={styles.viewAll}>View All</Text>
         </TouchableOpacity>
       </View>
     );
   };
   return (
-    <SafeAreaView style = {styles.container}>
+    <SafeAreaView style={styles.container}>
       <FlatList
         data={catgories}
         keyExtractor={(item) => `${item.id}`}
@@ -213,15 +213,13 @@ const HomeScreen = ({ navigation }) => {
 export default HomeScreen;
 
 const styles = StyleSheet.create({
-  container:{
-  
-   
-  },
+  container: {},
   headerContainer: {
     flexDirection: "row",
     marginHorizontal: SIZES.padding,
     alignItems: "center",
     height: 80,
+    marginTop:10
   },
   headerView: {
     flex: 1,

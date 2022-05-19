@@ -12,9 +12,10 @@ import { COLORS, FONTS, SIZES,icons } from "../constants";
 import RecipeCard from "../componets/RecipeCard";
 
 
-const Recipes = ({ navigation, route }) => {
+const Recipes = ({ navigation, route}) => {
   let categoryId = route.params.id;
   let categoryName = route.params.name;
+  console.log(categoryName)
   const [recipes, setRecipes] = useState([]);
   const getRecipes = (categoryId) => {
     fetch(
@@ -26,29 +27,26 @@ const Recipes = ({ navigation, route }) => {
       });
   };
 
+  const getAllRecipes = () => {
+    fetch(
+      `https://recipe-myapi.azurewebsites.net/api/RecipeEntities`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        setRecipes(data);
+      });
+  }
+
   useEffect(() => {
-    getRecipes(categoryId);
+    categoryId==0?getAllRecipes():getRecipes(categoryId);
   }, []);
   
-  function renderHeaderBar() {
-    return (
-      <View style={styles.headerBarContainer}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Image source={icons.back} style={styles.backIcon} />
-        </TouchableOpacity>
-      </View>
-    );
-  }
+  
 
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
-        <View style={styles.headerView}>
           <Text style={styles.headerText}>{categoryName}</Text>
-        </View>
       </View>
     );
   };
@@ -78,7 +76,7 @@ const Recipes = ({ navigation, route }) => {
         renderItem={renderRecipes}
         ListFooterComponent={<View style={{ marginBottom: 100 }}></View>}
       />
-      {renderHeaderBar()}
+      
     </SafeAreaView>
   );
 };
@@ -87,7 +85,7 @@ export default Recipes;
 
 const styles = StyleSheet.create({
   container: {
-    marginTop: 30,
+    marginTop: 10,
     padding: 30,
   },
   icon: {
@@ -124,37 +122,11 @@ const styles = StyleSheet.create({
     borderRadius: SIZES.radius,
   },
   headerContainer: {
-    marginHorizontal: SIZES.padding,
+   // marginHorizontal: SIZES.padding,
     alignItems: "center",
-    height: 80,
   },
   headerText: {
     fontSize: 30,
   },
-  headerBarContainer: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    height: 90,
-    flexDirection: "row",
-    alignItems: "flex-end",
-    paddingHorizontal: SIZES.padding,
-    paddingBottom: 10,
-  },
-  backButton: {
-    alignItems: "center",
-    justifyContent: "center",
-    height: 35,
-    width: 35,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: COLORS.lightGray,
-    backgroundColor: COLORS.transparentBlack5,
-  },
-  backIcon: {
-    width: 15,
-    height: 15,
-    tintColor: COLORS.lightGray,
-  },
+ 
 });

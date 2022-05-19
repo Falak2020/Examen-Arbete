@@ -6,14 +6,36 @@ import {
   TouchableOpacity,
   Animated,
   Platform,
+  Button,
+  Share,
 } from "react-native";
 import React, { useRef, useState, useEffect } from "react";
 import { BlurView } from "expo-blur";
 
-import { SIZES, FONTS, COLORS, icons } from "../constants";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
+import { SIZES, FONTS, COLORS, icons, images } from "../constants";
 
 const HEADER_HEIGHT = 350;
-
+const onShare = async (selectedRecipe) => {
+  try {
+    const result = await Share.share({
+      message: selectedRecipe.name,
+    });
+    if (result.action === Share.sharedAction) {
+      if (result.activityType) {
+        // shared with activity type of result.activityType
+      } else {
+        // shared
+      }
+    } else if (result.action === Share.dismissedAction) {
+      // dismissed
+    }
+  } catch (error) {
+    alert(error.message);
+  }
+};
 const RecipeCreatorCardDetail = ({ selectedRecipe, navigation }) => {
   return (
     <View
@@ -114,25 +136,49 @@ const Recipe = ({ navigation, route }) => {
   const [selectedRecipe, setSelectedRecipe] = useState(null);
   const scrollY = useRef(new Animated.Value(0)).current;
   const [isedit, setIsEdit] = useState(false);
-
+  
   let instructionsArry = selectedRecipe?.instructions.split(".");
 
-  const editRecipe = () => {
-    selectedRecipe.isliked = !selectedRecipe.isliked;
-    console.log(
-      `https://recipe-myapi.azurewebsites.net/api/RecipeEntities/${selectedRecipe.id}/1`
-    );
-    fetch(
-      `https://recipe-myapi.azurewebsites.net/api/RecipeEntities/${selectedRecipe.id}/1`
-    ).then((res) => {
-      if (res.status == "204") setIsEdit(!isedit);
-    });
-  };
+  ///////////////////////////////
   useEffect(() => {
     let { recipe } = route.params;
     setSelectedRecipe(recipe);
   }, []);
 
+  ///////////////////////////////
+  const editRecipe = () => {
+    selectedRecipe.isliked = !selectedRecipe.isliked;
+   
+    fetch(
+      `https://recipe-myapi.azurewebsites.net/api/RecipeEntities/${selectedRecipe.id}/1`
+    ).then((res) => {
+      if (res.status == "204") setIsEdit(!isedit);
+      AsyncStorage.getItem('LikedRecipes', (err, result) => {
+        if (result != null) {
+          let store = JSON.parse(result);
+          let index = store.findIndex(item=>item.id==selectedRecipe.id)
+          console.log(index)
+          if(index == -1){
+            let likedRecipes = [...store,selectedRecipe];
+            AsyncStorage.setItem('LikedRecipes',JSON.stringify(likedRecipes));
+          }
+          else{
+            let likedRecipes = store.filter(item=>item.id != selectedRecipe.id)
+            AsyncStorage.setItem('LikedRecipes',JSON.stringify(likedRecipes));
+          }
+          
+        }
+        else{
+          console.log('ss')
+          const likedRecipes = [selectedRecipe];
+          AsyncStorage.setItem('LikedRecipes',JSON.stringify(likedRecipes));
+        }
+      })
+     
+    });
+
+  };
+ 
   const renderRecipeCardHeader = () => {
     return (
       <View
@@ -203,7 +249,18 @@ const Recipe = ({ navigation, route }) => {
         >
           <Image source={icons.back} style={styles.backIcon} />
         </TouchableOpacity>
-       
+        {/**Share icon */}
+        <TouchableOpacity
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            height: 35,
+            width: 35,
+          }}
+          onPress={() => onShare(selectedRecipe)}
+        >
+          <Image source={images.share} style={styles.share} />
+        </TouchableOpacity>
       </View>
     );
   }
@@ -217,7 +274,7 @@ const Recipe = ({ navigation, route }) => {
             justifyContent: "center",
           }}
         >
-          <View style = {styles.likeContainer}>
+          <View style={styles.likeContainer}>
             <Text
               style={{
                 ...FONTS.h2,
@@ -225,8 +282,20 @@ const Recipe = ({ navigation, route }) => {
             >
               {selectedRecipe?.name}
             </Text>
-             {/**Like section */}
-             <TouchableOpacity
+            {/**Share icon */}
+            <TouchableOpacity
+              style={{
+                justifyContent: "center",
+                alignItems: "center",
+                height: 35,
+                width: 35,
+              }}
+              onPress={() => onShare(selectedRecipe)}
+            >
+              <Image source={images.share} style={styles.share} />
+            </TouchableOpacity>
+            {/**Like section */}
+            <TouchableOpacity
               style={styles.likeIcon}
               onPress={() => editRecipe()}
             >
@@ -344,8 +413,6 @@ const Recipe = ({ navigation, route }) => {
           </View>
         }
       />
-
-      {renderHeaderBar()}
     </View>
   );
 };
@@ -441,13 +508,18 @@ const styles = StyleSheet.create({
     height: 15,
     tintColor: COLORS.lightGray,
   },
-  likeContainer:{
-    flexDirection:'row',
-    justifyContent:'space-between',
-    alignItems:'center'
+  share: {
+    height: 36,
+    width: 30,
+    tintColor: COLORS.darkGreen,
+  },
+  likeContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   likeIcon: {
-    marginRight:4,
+    marginRight: 4,
     height: 35,
     width: 25,
   },
