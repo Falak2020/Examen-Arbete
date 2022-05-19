@@ -71,7 +71,6 @@ export default function App() {
   function LikedRecipes(){
     return (
       <Stack.Navigator
-     
         screenOptions={() => ({
           headerShown: true,
           headerTitle: "",
