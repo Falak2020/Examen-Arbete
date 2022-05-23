@@ -36,7 +36,6 @@ export default {
     search,
     settings,
     rightArrow,
-
     anchovy,
     coriander,
     chicken,

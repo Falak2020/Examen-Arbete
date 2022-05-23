@@ -122,15 +122,18 @@ const HomeScreen = ({ navigation }) => {
         </View>
         <View style={styles.cardTextContainer}>
           <Text style={styles.cardText}>
-            you have 12 recipes that you havenot tried yet
+            Har du inte mycket tid och vill inta tillbringa din tid i köket
           </Text>
           <TouchableOpacity
             style={{
               marginTop: 10,
             }}
-            onPress={() => console.log("see Recipe")}
+            onPress={() => navigation.navigate("Recipes",{
+              id : -1,
+              name : 'Enkla Recept'
+            })}
           >
-            <Text style={styles.seeRecipeText}>See Recipes</Text>
+            <Text style={styles.seeRecipeText}>Kolla snappa recipes</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -146,7 +149,7 @@ const HomeScreen = ({ navigation }) => {
             ...FONTS.h2,
           }}
         >
-          Trending Recipe
+          Trendiga recept
         </Text>
         <FlatList
           data={trendingRecipes}

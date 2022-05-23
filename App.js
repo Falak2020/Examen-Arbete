@@ -142,16 +142,6 @@ export default function App() {
         <Stack.Screen name="FilteredScreen" component={FilteredScreen} />
       </Stack.Navigator>
     </NavigationContainer>
-
-    /**  <View>
-    
-
-  <Pressable onPress={() =>fetchApi()}>
-    <Text>hhhhh</Text>
-  </Pressable>
-    
-  </View>
-*/
   );
 }
 

@@ -17,6 +17,8 @@ const Recipes = ({ navigation, route}) => {
   let categoryName = route.params.name;
   console.log(categoryName)
   const [recipes, setRecipes] = useState([]);
+  
+
   const getRecipes = (categoryId) => {
     fetch(
       `https://recipe-myapi.azurewebsites.net/api/CategoryEntities/${categoryId}`
@@ -37,8 +39,25 @@ const Recipes = ({ navigation, route}) => {
       });
   }
 
+  const getSimples = ()=> {
+    fetch(
+      `https://recipe-myapi.azurewebsites.net/api/RecipeEntities`
+    ).then(res=>res.json())
+    .then(data=>{
+      let simpleRecipes = data.filter(recipe => recipe.isSimple != false)
+      setRecipes(simpleRecipes)
+    })
+  }
+
   useEffect(() => {
-    categoryId==0?getAllRecipes():getRecipes(categoryId);
+    if(categoryId == 0 )
+     return getAllRecipes();
+    else if(categoryId == -1 )
+     return getSimples(); 
+    
+    else
+    return getRecipes(categoryId);
+
   }, []);
   
   
