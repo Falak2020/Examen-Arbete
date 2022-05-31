@@ -12,7 +12,7 @@ const FilteredScreen = ({ navigation, route }) => {
       .then((res) => res.json())
       .then((data) => {
         setFilter(
-          data.filter((recipe) => recipe.name.toLowerCase().match(searchKey))
+          data.filter((recipe) => recipe.name.toLowerCase().match(searchKey.toLowerCase()))
         );
       });
 

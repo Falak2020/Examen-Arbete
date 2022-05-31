@@ -7,41 +7,106 @@ import {
   TouchableOpacity,
   ImageBackground,
   StatusBar,
+  Alert
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { auth } from "../firebase";
 import { useNavigation } from "@react-navigation/core";
 import { images, COLORS, SIZES, FONTS } from "../constants";
+import { setSignIn } from '../store/actions'
+import { useDispatch } from 'react-redux'
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+
+
+  var formData = new FormData();
+  formData.append('FirstName', 'email');
+  formData.append('LastName',' email');
+  formData.append('Email', email);
+  formData.append('password', password);
+ 
+ const Register =()=>{
+
+   fetch("https://recipe-myapi.azurewebsites.net/api/User/register", {
+      method: 'POST',
+      body: formData,
+
+      headers: {
+          'Content-Type': 'multipart/form-data',
+      }
+  }).then(res=>console.log(res.status))
+ }
+  
+ const Login = () =>{
+  fetch("https://recipe-myapi.azurewebsites.net/api/User/LogIn", {
+    method: 'POST',
+    body: formData,
+
+    headers: {
+        'Content-Type': 'multipart/form-data',
+    }
+}).then(res=>res.json())
+  .then(data =>{dispatch(setSignIn(true))})
+ }
+ 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-     
       if (user) {
         navigation.navigate("Start");
+      }
+      else{
+        AsyncStorage.getItem("user", (err, result) => {
+          if (result != null) {
+            const user = JSON.parse(result);
+           console.log(user)
+          }
+        });
       }
     });
     return unsubscribe;
   }, []);
-
+ 
+  const resetForm = () =>{
+     setEmail('');
+     setPassword('');
+  };
   const handleSignUp = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        console.log(user.email);
+        AsyncStorage.setItem('user',JSON.stringify(user));
       })
-      .catch((error) => console.log(error));
+      .catch((error) =>Alert.alert(
+        'Error',
+        error.toString(),
+        [
+            { text: "Ok", style: 'destructive', onPress: () => resetForm()},
+           
+        ]
+    ));
   };
   const handleLogin = () => {
     auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
+        AsyncStorage.setItem('user',JSON.stringify(user));
+        console.log(user)
       })
-      .catch((error) => console.log(error));
+      .catch((error) => Alert.alert(
+        'Error',
+        error.toString(),
+        [
+            { text: "Ok", style: 'destructive', onPress: () => resetForm()},
+           
+        ]
+    ));
   };
 
   function renderHeader() {
@@ -52,7 +117,7 @@ const Login = () => {
         }}
       >
         <ImageBackground
-          source={images.loginBackground}
+          source={images.background}
           style={{
             flex: 1,
             justifyContent: "flex-end",
@@ -96,42 +161,12 @@ const Login = () => {
     );
   }
   return (
-    /**   <KeyboardAvoidingView style={styles.container} behavior="padding">
-      <View style={styles.inputContainer}>
-        <TextInput 
-          placeholder="Email" 
-          style={styles.input}
-          value={email} 
-          onChangeText={(text)=>setEmail(text)}
-        />
-        <TextInput
-          placeholder="password"
-          style={styles.input}
-          value={password} 
-          onChangeText={(text)=>setPassword(text)}
-          secureTextEntry
-        />
-      </View>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          onPress={handleSignUp} 
-          style={[styles.button,styles.buttonOutline]}
-        >
-          <Text style={styles.buttonOutlineText}>Register</Text>
-        </TouchableOpacity>
-      </View>
-    </KeyboardAvoidingView>
- 
-   */
+   
     <View
       style={{
         flex: 1,
-        backgroundColor: COLORS.black,
-        // justifyContent:'center',
+        backgroundColor:COLORS.green,
+        
       }}
     >
       <StatusBar barStyle="light-content" />

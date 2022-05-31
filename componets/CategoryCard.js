@@ -7,7 +7,7 @@ const CategoryCard = ({ containerStyle, categoryItem, onPress }) => {
   return (
 
     <TouchableOpacity
-      style={[styles.cardContainer, { ...containerStyle }]}
+      style={[styles.cardContainer,styles.elevation, { ...containerStyle }]}
       onPress={onPress}
     >
       <Image
@@ -50,5 +50,9 @@ const styles = StyleSheet.create({
       color: COLORS.gray,
       ...FONTS.body4,
       marginTop:10
-  }
+  },
+  elevation: {
+    elevation: 20,
+    shadowColor: '#171717',
+  },
 });

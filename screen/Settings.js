@@ -7,13 +7,14 @@ const Settings = ({ navigation }) => {
   const [likedRecipes, setLikedRecipes] = useState([]);
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-      //AsyncStorage.removeItem('LikedRecipes')
+   // AsyncStorage.removeItem('LikedRecipes')
       AsyncStorage.getItem("LikedRecipes", (err, result) => {
         if (result != null) {
           const recipes = JSON.parse(result);
           setLikedRecipes(recipes);
         } else {
           console.log("first");
+          setLikedRecipes([])
         }
       });
     });
@@ -49,7 +50,7 @@ const Settings = ({ navigation }) => {
         keyExtractor={(item) => `${item.id}`}
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
-        ListHeaderComponent={<View></View>}
+        ListHeaderComponent={<View style= {styles.headerContainer}><Text style= {styles.headerText}>Dina favoriter</Text></View>}
         renderItem={renderRecipes}
         ListFooterComponent={<View style={{ marginBottom: 100 }}></View>}
       />
@@ -64,4 +65,11 @@ const styles = StyleSheet.create({
     marginTop: 10,
     padding: 30,
   },
+  headerContainer: {
+    
+     alignItems: "center",
+   },
+   headerText: {
+     fontSize: 30,
+   },
 });

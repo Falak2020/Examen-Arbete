@@ -6,18 +6,18 @@ import {
   TouchableOpacity,
   Animated,
   Platform,
-  Button,
   Share,
 } from "react-native";
 import React, { useRef, useState, useEffect } from "react";
 import { BlurView } from "expo-blur";
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
-
+ 
 import { SIZES, FONTS, COLORS, icons, images } from "../constants";
 
 const HEADER_HEIGHT = 350;
+
+ 
 const onShare = async (selectedRecipe) => {
   try {
     const result = await Share.share({
@@ -127,7 +127,7 @@ const InstructionDetail = ({ instruction, num }) => {
   return (
     <View style={styles.instructionContainer}>
       <Text style={styles.instruction}>
-        {num + 1}. {instruction}
+        {num + 1}.{instruction}
       </Text>
     </View>
   );
@@ -137,7 +137,9 @@ const Recipe = ({ navigation, route }) => {
   const scrollY = useRef(new Animated.Value(0)).current;
   const [isedit, setIsEdit] = useState(false);
   
-  let instructionsArry = selectedRecipe?.instructions.split(".");
+  let Array = selectedRecipe?.instructions.split(".");
+  
+  let instructionsArry = Array?.filter(instruction=>instruction.length>0)
 
   ///////////////////////////////
   useEffect(() => {
@@ -145,7 +147,10 @@ const Recipe = ({ navigation, route }) => {
     setSelectedRecipe(recipe);
   }, []);
 
-  ///////////////////////////////
+  
+
+
+ 
   const editRecipe = () => {
     selectedRecipe.isliked = !selectedRecipe.isliked;
    
@@ -290,7 +295,7 @@ const Recipe = ({ navigation, route }) => {
                 height: 35,
                 width: 35,
               }}
-              onPress={() => onShare(selectedRecipe)}
+              onPress={()=>{onShare(selectedRecipe)}}
             >
               <Image source={images.share} style={styles.share} />
             </TouchableOpacity>

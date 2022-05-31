@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
 import { COLORS } from "../constants";
 
-const TabIcon = ({ focused, icon }) => {
+const TabIcon = ({ focused, icon,title }) => {
   return (
     <View style={styles.iconContainer}>
       <Image
@@ -14,6 +14,9 @@ const TabIcon = ({ focused, icon }) => {
           tintColor: focused ? COLORS.darkGreen : COLORS.lightLime,
         }}
       />
+      <Text style = {{color:focused ? COLORS.darkGreen:COLORS.lightLime}}>
+         {title}
+      </Text>
       {focused && <View style = {styles.lineStyle}></View>}
     </View>
   );

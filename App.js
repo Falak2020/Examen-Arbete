@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Image, LogBox } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -16,11 +16,18 @@ import FilteredScreen from "./screen/FilteredScreen";
 import Login from "./screen/Login";
 import { SIZES, FONTS, COLORS, icons, images } from "./constants";
 import { auth } from "./firebase";
+import VegetarianScreen from "./screen/VegetarianScreen";
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  
+  useEffect(() => {
+    
+    LogBox.ignoreLogs(['AsyncStorage has been extracted from react-native core and will be removed in a future release.']);
+  }, [])
+  
   const headerLeft = (navigation) => {
     return (
       <TouchableOpacity
@@ -31,15 +38,27 @@ export default function App() {
       </TouchableOpacity>
     );
   };
-  const handleSignout = (navigation) => {
+  const handleSignout = (navigation,router) => {
+    
     auth.signOut().then(() => {
+      if(router=='home')
       navigation.replace("login");
+      else
+      navigation.replace('login')
     });
   };
 
   const headerRight = (navigation) => {
     return (
-      <TouchableOpacity onPress={()=>handleSignout(navigation)}>
+      <TouchableOpacity onPress={()=>handleSignout(navigation,'home')}>
+        <AntDesign name={"logout"} color={COLORS.black} size={30} />
+      </TouchableOpacity>
+    );
+  };
+
+  const headerRight2 = (navigation) => {
+    return (
+      <TouchableOpacity onPress={()=>handleSignout(navigation,'favorite')}>
         <AntDesign name={"logout"} color={COLORS.black} size={30} />
       </TouchableOpacity>
     );
@@ -64,6 +83,8 @@ export default function App() {
         <Stack.Screen name="Recipes" component={Recipes} />
         <Stack.Screen name="User" component={UserScreen} />
         <Stack.Screen name="FilteredScreen" component={FilteredScreen} />
+        <Stack.Screen name="Vegetarian" component={VegetarianScreen} />
+
       </Stack.Navigator>
     );
   }
@@ -71,12 +92,14 @@ export default function App() {
   function LikedRecipes(){
     return (
       <Stack.Navigator
-        screenOptions={() => ({
+        screenOptions={({navigation}) => ({
           headerShown: true,
           headerTitle: "",
           headerStyle: {
             backgroundColor: COLORS.darkGreen,
           },
+         
+          headerRight: () => (headerRight2(navigation)),
          
           
         })}
@@ -109,7 +132,7 @@ export default function App() {
           component={StartPage}
           options={{
             tabBarIcon: ({ focused }) => (
-              <TabIcon focused={focused} icon={icons.home} />
+              <TabIcon focused={focused} icon={icons.home} title='Home'/>
             ),
           }}
         />
@@ -118,8 +141,9 @@ export default function App() {
           component={LikedRecipes}
           options={{
             tabBarIcon: ({ focused }) => (
-              <TabIcon focused={focused} icon={icons.like_filled} />
-            ),
+              <TabIcon focused={focused} icon={icons.like_filled} title ='Recept' />
+             
+            ), 
           }}
         />
       </Tab.Navigator>

@@ -3,7 +3,7 @@ import React from "react";
 import { COLORS, FONTS, SIZES,icons } from "../constants";
 const RecipeCard = ({ recipe, onPress }) => {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.cardContainer}>
+    <TouchableOpacity onPress={onPress} style={[styles.cardContainer,styles.elevation]}>
       <Image
         source={{ uri: recipe.imageURL }}
         resizeMode="cover"
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         padding: 10,
         marginTop: 10,
         borderRadius: SIZES.radius,
-        backgroundColor: COLORS.lightLime,
+        backgroundColor: COLORS.white,
       },
       imageStyle: {
         width: 100,
@@ -46,5 +46,9 @@ const styles = StyleSheet.create({
       bakeTime: {
         color: COLORS.gray,
         ...FONTS.body4,
+      },
+      elevation: {
+        elevation: 10,
+        shadowColor: '#171717',
       },
 });

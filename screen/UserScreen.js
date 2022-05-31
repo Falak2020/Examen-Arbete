@@ -69,7 +69,7 @@ const UserScreen = ({ navigation, route }) => {
       {renderUserProfilePic()}
       {renderUserName()} 
       {renderUserInfo()}
-      {renderHeaderBar()}
+     
     </View>
   );
 };

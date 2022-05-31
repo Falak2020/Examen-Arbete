@@ -10,12 +10,10 @@ import {
 } from "react-native";
 
 import React, { useEffect, useState, useRef } from "react";
-import { AntDesign } from '@expo/vector-icons';
 
 import { CategoryCard, TrendingCard } from "../componets";
 import { FONTS, COLORS, SIZES, icons, images } from "../constants";
 import { auth } from "../firebase";
-
 const HomeScreen = ({ navigation }) => {
   const [catgories, setCategories] = useState([]);
   const [trendingRecipes, setTrendingRecipes] = useState([]);
@@ -48,14 +46,16 @@ const HomeScreen = ({ navigation }) => {
   };
 
   useEffect(() => {
-    
+    let isMounted = true;
     const unsubscribe = navigation.addListener("focus", () => {
       getTrendingRecipe();
       getCategories();
       setSearchVal("");
     });
-    return unsubscribe;
-   
+    return () => {
+      unsubscribe;
+      isMounted = false;
+    };
   }, [navigation]);
 
   const renderItem = ({ item }) => {
@@ -85,7 +85,6 @@ const HomeScreen = ({ navigation }) => {
           </Text>
           <Text style={styles.questionText}>Vad vill du laga idag?</Text>
         </View>
-        
       </View>
     );
   };
@@ -116,7 +115,7 @@ const HomeScreen = ({ navigation }) => {
 
   const renderSeeRecipeCard = () => {
     return (
-      <View style={styles.recipeCard}>
+      <View style={[styles.recipeCard,styles.elevation]}>
         <View style={styles.imageContainer}>
           <Image source={images.recipe} style={styles.image} />
         </View>
@@ -128,10 +127,12 @@ const HomeScreen = ({ navigation }) => {
             style={{
               marginTop: 10,
             }}
-            onPress={() => navigation.navigate("Recipes",{
-              id : -1,
-              name : 'Enkla Recept'
-            })}
+            onPress={() =>
+              navigation.navigate("Recipes", {
+                id: -1,
+                name: "Enkla Recept",
+              })
+            }
           >
             <Text style={styles.seeRecipeText}>Kolla snappa recipes</Text>
           </TouchableOpacity>
@@ -140,6 +141,29 @@ const HomeScreen = ({ navigation }) => {
     );
   };
 
+  const vegRecipeSection = () => {
+    return (
+      <View style={[styles.VegCard]}>
+        <View style={styles.imageContainer}>
+          <Image source={icons.veg} style={styles.vegimage} />
+        </View>
+
+        <TouchableOpacity
+          style={{
+            ...styles.vegCardInfoContainer,...styles.elevation,
+            backgroundColor: COLORS.transparentDarkGray,
+          }}
+          onPress = {()=>{
+            navigation.navigate('Vegetarian');
+          }}
+
+        >
+          <Text style={styles.vegText}>vegetariska recept</Text>
+       
+      </TouchableOpacity>
+      </View>
+    );
+  };
   const renderTrendingSection = () => {
     return (
       <View style={{ marginTop: SIZES.padding }}>
@@ -180,7 +204,7 @@ const HomeScreen = ({ navigation }) => {
           onPress={() => {
             navigation.navigate("Recipes", {
               id: 0,
-              name: 'Alla recept',
+              name: "Alla recept",
             });
           }}
         >
@@ -201,6 +225,7 @@ const HomeScreen = ({ navigation }) => {
             {renderHeader()}
             {renderSearchBar()}
             {renderSeeRecipeCard()}
+            {vegRecipeSection()}
             {renderTrendingSection()}
             {renderCategoryHeader()}
           </View>
@@ -222,8 +247,9 @@ const styles = StyleSheet.create({
     marginHorizontal: SIZES.padding,
     alignItems: "center",
     height: 80,
-    marginTop:10
+    marginTop: 10,
   },
+
   headerView: {
     flex: 1,
   },
@@ -275,6 +301,30 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
   },
+  VegCard: {
+    alignItems: "center",
+    marginTop: SIZES.padding,
+  },
+  vegimage: {
+    width: 500,
+    height: 400,
+  },
+  vegCardInfoContainer: {
+    position: "absolute",
+    bottom: 4,
+    left: 10,
+    right: 10,
+    height: 100,
+    paddingVertical: SIZES.radius,
+    paddingHorizontal: SIZES.base,
+    borderRadius: SIZES.radius,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  vegText: {
+    color: COLORS.white,
+    fontSize: SIZES.padding,
+  },
   cardTextContainer: {
     flex: 1,
     paddingVertical: SIZES.radius,
@@ -301,5 +351,9 @@ const styles = StyleSheet.create({
   viewAll: {
     color: COLORS.gray,
     ...FONTS.body4,
+  },
+  elevation: {
+    elevation: 20,
+    shadowColor: '#171717',
   },
 });

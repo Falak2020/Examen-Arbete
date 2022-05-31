@@ -1,5 +1,5 @@
 const loginBackground = require("../assets/images/system/background1.jpg")
-const background = require("../assets/images/system/background.jpg")
+const background = require("../assets/images/system/back.jpg")
 
 const recipe = require("../assets/images/recipes/recipe.png")
 const spagetti = require("../assets/images/recipes/spagetti.png")
