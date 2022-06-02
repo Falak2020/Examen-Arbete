@@ -7,7 +7,7 @@ const Settings = ({ navigation }) => {
   const [likedRecipes, setLikedRecipes] = useState([]);
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
-   // AsyncStorage.removeItem('LikedRecipes')
+    // AsyncStorage.removeItem('LikedRecipes')
       AsyncStorage.getItem("LikedRecipes", (err, result) => {
         if (result != null) {
           const recipes = JSON.parse(result);
@@ -25,18 +25,12 @@ const Settings = ({ navigation }) => {
     return (
       <RecipeCard
         recipe={item}
-        onPress={() => {
-          fetch(
-            `https://recipe-myapi.azurewebsites.net/api/RecipeEntities/${item.id}`
-          )
-            .then((res) => res.json())
-            .then((data) => {
+        onPress={() => { 
               navigation.navigate("StartPage", {
                 screen: "Recipe",
                 params: {
-                  recipe: data,
+                  recipe: item,
                 },
-              });
             });
         }}
       />
@@ -71,5 +65,6 @@ const styles = StyleSheet.create({
    },
    headerText: {
      fontSize: 30,
+   
    },
 });

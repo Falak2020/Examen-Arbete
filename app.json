@@ -24,7 +24,8 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.falak.FoodRecipe"
+      "package": "com.falak.FoodRecipe",
+      "versionCode":1
     },
     "web": {
       "favicon": "./assets/favicon.png"

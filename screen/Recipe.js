@@ -324,7 +324,7 @@ const Recipe = ({ navigation, route }) => {
               ...FONTS.body4,
             }}
           >
-            {selectedRecipe?.bakeTime} min | {selectedRecipe?.serving} Serving
+            {selectedRecipe?.bakeTime} min | {selectedRecipe?.bakeTemperature}&deg; 
           </Text>
         </View>
       </View>
@@ -368,7 +368,7 @@ const Recipe = ({ navigation, route }) => {
     <View
       style={{
         flex: 1,
-        backgroundColor: COLORS.white,
+        
       }}
     >
       <Animated.FlatList
